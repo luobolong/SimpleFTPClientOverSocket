@@ -1,0 +1,78 @@
+220 Microsoft FTP Service
+ftp> OPTS UTF8 ON
+200 OPTS UTF8 command successful - UTF8 encoding now ON.
+ftp> USER anonymous
+331 Anonymous access allowed, send identity (e-mail name) as password.
+ftp> PASS 
+230 User logged in.
+ftp> SYST
+215 Windows_NT
+ftp> PWD
+257 "/" is current directory.
+ftp> PASV
+227 Entering Passive Mode (192,168,1,101,197,89).
+ftp> LIST
+125 Data connection already open; Transfer starting.
+226 Transfer complete.
+5/19 16:15:25: ftp> PWD
+2020/5/19 16:15:25: 257 "/" is current directory.
+2020/5/19 16:15:25: ftp> PASV
+2020/5/19 16:15:25: 227 Entering Passive Mode (192,168,1,101,233,60).
+2020/5/19 16:15:25: ftp> LIST
+2020/5/19 16:15:25: 125 Data connection already open; Transfer starting.
+2020/5/19 16:15:25: 226 Transfer complete.
+2020/5/19 16:15:33: ftp> CWD /1
+2020/5/19 16:15:33: 250 CWD command successful.
+2020/5/19 16:15:33: ftp> PWD
+2020/5/19 16:15:33: 257 "/1" is current directory.
+2020/5/19 16:15:33: ftp> PASV
+2020/5/19 16:15:33: 227 Entering Passive Mode (192,168,1,101,233,63).
+2020/5/19 16:15:33: ftp> LIST
+2020/5/19 16:15:33: 125 Data connection already open; Transfer starting.
+2020/5/19 16:15:33: 226 Transfer complete.
+2020/5/19 16:15:37: ftp> CDUP
+2020/5/19 16:15:37: 250 CDUP command successful.
+2020/5/19 16:15:37: ftp> PWD
+2020/5/19 16:15:37: 257 "/" is current directory.
+2020/5/19 16:15:37: ftp> PASV
+2020/5/19 16:15:37: 227 Entering Passive Mode (192,168,1,101,233,65).
+2020/5/19 16:15:37: ftp> LIST
+2020/5/19 16:15:37: 125 Data connection already open; Transfer starting.
+2020/5/19 16:15:37: 226 Transfer complete.
+2020/5/19 16:16:21: ftp> TYPE I
+2020/5/19 16:16:21: 200 Type set to I.
+2020/5/19 16:16:21: ftp> PASV
+2020/5/19 16:16:21: 227 Entering Passive Mode (192,168,1,101,233,69).
+2020/5/19 16:16:21: ftp> STOR 2020-05-14 10-12-23.mkv
+2020/5/19 16:16:21: 125 Data connection already open; Transfer starting.
+2020/5/19 16:16:21: 226 Transfer complete.
+2020/5/19 16:16:21: ftp> PWD
+2020/5/19 16:16:21: 257 "/" is current directory.
+2020/5/19 16:16:21: ftp> PASV
+2020/5/19 16:16:21: 227 Entering Passive Mode (192,168,1,101,233,71).
+2020/5/19 16:16:21: ftp> LIST
+2020/5/19 16:16:21: 150 Opening BINARY mode data connection.
+2020/5/19 16:16:21: 226 Transfer complete.
+2020/5/19 16:16:29: ftp> DELE 2020-05-14 10-12-23.mkv
+2020/5/19 16:16:29: 250 DELE command successful.
+2020/5/19 16:16:29: ftp> PWD
+2020/5/19 16:16:29: 257 "/" is current directory.
+2020/5/19 16:16:29: ftp> PASV
+2020/5/19 16:16:29: 227 Entering Passive Mode (192,168,1,101,233,74).
+2020/5/19 16:16:29: ftp> LIST
+2020/5/19 16:16:29: 125 Data connection already open; Transfer starting.
+2020/5/19 16:16:29: 226 Transfer complete.
+2020/5/19 16:16:32: ftp> TYPE I
+2020/5/19 16:16:32: 200 Type set to I.
+2020/5/19 16:16:32: ftp> PASV
+2020/5/19 16:16:32: 227 Entering Passive Mode (192,168,1,101,233,77).
+2020/5/19 16:16:32: ftp> STOR 2020-05-19 10-13-25.mp4
+2020/5/19 16:16:32: 125 Data connection already open; Transfer starting.
+2020/5/19 16:16:41: 226 Transfer complete.
+2020/5/19 16:16:41: ftp> PWD
+2020/5/19 16:16:41: 257 "/" is current directory.
+2020/5/19 16:16:41: ftp> PASV
+2020/5/19 16:16:41: 227 Entering Passive Mode (192,168,1,101,233,79).
+2020/5/19 16:16:41: ftp> LIST
+2020/5/19 16:16:41: 125 Data connection already open; Transfer starting.
+2020/5/19 16:16:41: 226 Transfer complete.

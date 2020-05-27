@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,10 +12,10 @@ using System.Windows.Forms;
 
 namespace ftpclient
 {
-    public delegate void transferInfo(string Hostaddress, int Port, string Protocol, bool isPasstive, bool isAnonymous, string Username, string Password);
+    public delegate void loginEventHandler(string Hostaddress, int Port, string Protocol, bool isPasstive, bool isAnonymous, string Username, string Password);
     public partial class LoginForm : Form
     {
-        public event transferInfo transferEvent;
+        public event loginEventHandler loginEvent;
         #region 属性
         public string Hostaddress
         {
@@ -38,7 +39,7 @@ namespace ftpclient
                 }
                 catch
                 {
-                    return 0;
+                    return -1;
                 }
                 return port;
             }
@@ -114,7 +115,7 @@ namespace ftpclient
         private bool checkInput()
         {
             if (Regex.IsMatch(Hostaddress, "^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$") &&
-                (Port > 0 && Port < 65536))
+                (Port > -1 && Port < 65536))
             {
                 return true;
             }
@@ -128,17 +129,29 @@ namespace ftpclient
         {
             Close();
         }
-
-        private void connectButton_Click(object sender, EventArgs e)
+        private void connect()
         {
             if (checkInput())
             {
-                transferEvent?.Invoke(Hostaddress, Port, Protocol, isPasstive, isAnonymous, Username, Password); // 使用委托把参数传给主窗口
+                loginEvent?.Invoke(Hostaddress, Port, Protocol, isPasstive, isAnonymous, Username, Password); // 使用委托把参数传给主窗口
                 Close();
             }
             else
             {
-                MessageBox.Show("服务器地址和端口为无效值");
+                MessageBox.Show("服务器地址或端口为无效值");
+            }
+        }
+
+        private void connectButton_Click(object sender, EventArgs e)
+        {
+            connect();
+        }
+
+        private void passwordTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyValue == 13)
+            {
+                connect();
             }
         }
     }

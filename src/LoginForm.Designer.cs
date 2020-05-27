@@ -52,7 +52,7 @@
             this.label1.Location = new System.Drawing.Point(29, 26);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 12);
-            this.label1.TabIndex = 0;
+            this.label1.TabIndex = 10;
             this.label1.Text = "主机(H):";
             // 
             // addressTextBox
@@ -60,7 +60,7 @@
             this.addressTextBox.Location = new System.Drawing.Point(100, 23);
             this.addressTextBox.Name = "addressTextBox";
             this.addressTextBox.Size = new System.Drawing.Size(242, 21);
-            this.addressTextBox.TabIndex = 1;
+            this.addressTextBox.TabIndex = 0;
             // 
             // label2
             // 
@@ -68,7 +68,7 @@
             this.label2.Location = new System.Drawing.Point(358, 26);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(53, 12);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 11;
             this.label2.Text = "端口(P):";
             // 
             // portTextBox
@@ -76,7 +76,7 @@
             this.portTextBox.Location = new System.Drawing.Point(417, 23);
             this.portTextBox.Name = "portTextBox";
             this.portTextBox.Size = new System.Drawing.Size(33, 21);
-            this.portTextBox.TabIndex = 3;
+            this.portTextBox.TabIndex = 1;
             this.portTextBox.Text = "21";
             // 
             // label3
@@ -85,7 +85,7 @@
             this.label3.Location = new System.Drawing.Point(29, 63);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(53, 12);
-            this.label3.TabIndex = 4;
+            this.label3.TabIndex = 12;
             this.label3.Text = "协议(P):";
             // 
             // protocolComboBox
@@ -95,7 +95,7 @@
             this.protocolComboBox.Location = new System.Drawing.Point(100, 60);
             this.protocolComboBox.Name = "protocolComboBox";
             this.protocolComboBox.Size = new System.Drawing.Size(242, 20);
-            this.protocolComboBox.TabIndex = 5;
+            this.protocolComboBox.TabIndex = 9;
             // 
             // anonymousCheckBox
             // 
@@ -103,7 +103,7 @@
             this.anonymousCheckBox.Location = new System.Drawing.Point(360, 157);
             this.anonymousCheckBox.Name = "anonymousCheckBox";
             this.anonymousCheckBox.Size = new System.Drawing.Size(90, 16);
-            this.anonymousCheckBox.TabIndex = 6;
+            this.anonymousCheckBox.TabIndex = 4;
             this.anonymousCheckBox.Text = "匿名登录(A)";
             this.anonymousCheckBox.UseVisualStyleBackColor = true;
             this.anonymousCheckBox.CheckedChanged += new System.EventHandler(this.anonymousCheckBox_CheckedChanged);
@@ -114,7 +114,7 @@
             this.label4.Location = new System.Drawing.Point(29, 158);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(65, 12);
-            this.label4.TabIndex = 7;
+            this.label4.TabIndex = 14;
             this.label4.Text = "用户名(U):";
             // 
             // usernameTextBox
@@ -122,7 +122,7 @@
             this.usernameTextBox.Location = new System.Drawing.Point(100, 155);
             this.usernameTextBox.Name = "usernameTextBox";
             this.usernameTextBox.Size = new System.Drawing.Size(242, 21);
-            this.usernameTextBox.TabIndex = 8;
+            this.usernameTextBox.TabIndex = 2;
             // 
             // label5
             // 
@@ -130,7 +130,7 @@
             this.label5.Location = new System.Drawing.Point(29, 196);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 12);
-            this.label5.TabIndex = 9;
+            this.label5.TabIndex = 15;
             this.label5.Text = "密码(W):";
             // 
             // passwordTextBox
@@ -139,14 +139,15 @@
             this.passwordTextBox.Name = "passwordTextBox";
             this.passwordTextBox.PasswordChar = '*';
             this.passwordTextBox.Size = new System.Drawing.Size(242, 21);
-            this.passwordTextBox.TabIndex = 10;
+            this.passwordTextBox.TabIndex = 3;
+            this.passwordTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.passwordTextBox_KeyDown);
             // 
             // connectButton
             // 
             this.connectButton.Location = new System.Drawing.Point(100, 235);
             this.connectButton.Name = "connectButton";
             this.connectButton.Size = new System.Drawing.Size(100, 33);
-            this.connectButton.TabIndex = 11;
+            this.connectButton.TabIndex = 5;
             this.connectButton.Text = "快速连接(Q)";
             this.connectButton.UseVisualStyleBackColor = true;
             this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
@@ -156,7 +157,7 @@
             this.cancelButton.Location = new System.Drawing.Point(242, 235);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(100, 33);
-            this.cancelButton.TabIndex = 12;
+            this.cancelButton.TabIndex = 6;
             this.cancelButton.Text = "取消(C)";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
@@ -167,7 +168,7 @@
             this.radioButton1.Location = new System.Drawing.Point(100, 103);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(89, 16);
-            this.radioButton1.TabIndex = 13;
+            this.radioButton1.TabIndex = 7;
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "被动连接(P)";
             this.radioButton1.UseVisualStyleBackColor = true;
@@ -178,7 +179,7 @@
             this.radioButton2.Location = new System.Drawing.Point(253, 103);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(89, 16);
-            this.radioButton2.TabIndex = 14;
+            this.radioButton2.TabIndex = 8;
             this.radioButton2.TabStop = true;
             this.radioButton2.Text = "主动连接(A)";
             this.radioButton2.UseVisualStyleBackColor = true;
@@ -189,7 +190,7 @@
             this.label6.Location = new System.Drawing.Point(98, 131);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(281, 12);
-            this.label6.TabIndex = 15;
+            this.label6.TabIndex = 13;
             this.label6.Text = "推荐使用被动连接，如要使用主动连接请关闭防火墙";
             // 
             // LoginForm

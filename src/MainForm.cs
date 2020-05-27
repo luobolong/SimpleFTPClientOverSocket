@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Threading;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace ftpclient
 {
@@ -19,6 +20,7 @@ namespace ftpclient
         private string syst;
         private Thread upload_thread;
         private Thread download_thread;
+        private Thread updateProgressBar_thread;
         public MainForm()
         {
             InitializeComponent();
@@ -46,7 +48,7 @@ namespace ftpclient
             ulong size_sum = 0;
             foreach (string f in filelist)
             {
-                ListViewItem item = readFileList(f, syst);
+                ListViewItem item = getItem(f, syst);
                 try
                 {
                     if (item.SubItems[2].Text == "File")
@@ -73,208 +75,24 @@ namespace ftpclient
             serverStatusLabel.Text = file_count.ToString() + " 个文件 和 " + folder_count.ToString() + " 个目录。大小总计：" + size_sum.ToString() + " 字节";
         }
 
-        #region 读取原始数据的一行
-        private ListViewItem readFileList(string line, string syst)
+        private ListViewItem getItem(string line, string syst)
         {
             ListViewItem item = new ListViewItem();
             try
             {
-                if (syst.Contains("UNIX"))
-                {
-                    string name = "";
-                    string size = "";
-                    string type = "";
-                    string date = "";
-                    string authority = "";
-                    string owner = "";
-                    int var_flag = 0;
-
-                    for (int i = 0; i < line.Length;)
-                    {
-                        while (line[i] == ' ')
-                        {
-                            i++;
-                        }
-                        if (var_flag == 0)
-                        {
-                            for (; line[i] != ' '; i++)
-                            {
-                                authority += line[i];
-                            }
-                            var_flag = 1;
-                            continue;
-                        }
-                        if (var_flag == 1)
-                        {
-                            string typecode = "";
-                            for (; line[i] != ' '; i++)
-                            {
-                                typecode += line[i];
-                            }
-                            if (typecode.Equals("1"))
-                            {
-                                type = "File";
-                            }
-                            else
-                            {
-                                type = "Folder";
-                            }
-                            var_flag = 2;
-                            continue;
-                        }
-                        if (var_flag == 2)
-                        {
-                            string o1 = "", o2 = "";
-                            for (; line[i] != ' '; i++)
-                            {
-                                o1 += line[i];
-                            }
-                            while (line[i] == ' ')
-                            {
-                                i++;
-                            }
-                            for (; line[i] != ' '; i++)
-                            {
-                                o2 += line[i];
-                            }
-                            owner = o1 + " " + o2;
-                            var_flag = 3;
-                            continue;
-                        }
-                        if (var_flag == 3)
-                        {
-                            string fs = "";
-                            for (; line[i] != ' '; i++)
-                            {
-                                fs += line[i];
-                            }
-                            if (type.Equals("File"))
-                            {
-                                size = fs;
-                            }
-                            else
-                            {
-                                size = "";
-                            }
-                            var_flag = 4;
-                            continue;
-                        }
-                        if (var_flag == 4)
-                        {
-                            string d1 = "", d2 = "", d3 = "";
-                            for (; line[i] != ' '; i++)
-                            {
-                                d1 += line[i];
-                            }
-                            while (line[i] == ' ')
-                            {
-                                i++;
-                            }
-                            for (; line[i] != ' '; i++)
-                            {
-                                d2 += line[i];
-                            }
-                            while (line[i] == ' ')
-                            {
-                                i++;
-                            }
-                            for (; line[i] != ' '; i++)
-                            {
-                                d3 += line[i];
-                            }
-                            date = d1 + "/" + d2 + "/" + d3;
-                            var_flag = 5;
-                            continue;
-                        }
-                        if (var_flag == 5)
-                        {
-                            for (; i < line.Length; i++)
-                            {
-                                name += line[i];
-                            }
-                            break;
-                        }
-                    }
-                    item.Text = name;
-                    item.SubItems.Add(size);
-                    item.SubItems.Add(type);
-                    item.SubItems.Add(date);
-                    //item.SubItems.Add(authority);
-                    //item.SubItems.Add(owner);
-                }
-                else if (syst.Contains("Windows_NT"))
-                {
-                    string name = "";
-                    string size = "";
-                    string type = "";
-                    string date = "";
-                    int var_flag = 0;
-                    for (int i = 0; i < line.Length;)
-                    {
-                        while (line[i] == ' ')
-                        {
-                            i++;
-                        }
-                        if (var_flag == 0)
-                        {
-                            for (; line[i] != ' '; i++)
-                            {
-                                date += line[i];
-                            }
-                            while (line[i] == ' ')
-                            {
-                                i++;
-                            }
-                            date += ' ';
-                            for (; line[i] != ' '; i++)
-                            {
-                                date += line[i];
-                            }
-                            var_flag = 1;
-                            continue;
-                        }
-                        if (var_flag == 1)
-                        {
-                            string temp = "";
-                            for (; line[i] != ' '; i++)
-                            {
-                                temp += line[i];
-                            }
-                            if (temp.Equals("<DIR>"))
-                            {
-                                type = "Folder";
-                            }
-                            else
-                            {
-                                type = "File";
-                                size = string.Copy(temp);
-                            }
-                            var_flag = 2;
-                            continue;
-                        }
-                        if (var_flag == 2)
-                        {
-                            for (; i < line.Length; i++)
-                            {
-                                name += line[i];
-                            }
-                            break;
-                        }
-                    }
-                    item.Text = name;
-                    item.SubItems.Add(size);
-                    item.SubItems.Add(type);
-                    item.SubItems.Add(date);
-                }
+                string[] res = ftp.readLine(line, syst);
+                item.Text = res[0];
+                item.SubItems.Add(res[1]);
+                item.SubItems.Add(res[2]);
+                item.SubItems.Add(res[3]);
             }
-            catch (Exception)
+            catch
             {
                 MessageBox.Show("读取列表错误");
             }
             return item;
         }
-        #endregion
-        private void login_transferEvent(string Hostaddress, int Port, string Protocol, bool isPasstive, bool isAnonymous, string Username, string Password)
+        private void login(string Hostaddress, int Port, string Protocol, bool isPasstive, bool isAnonymous, string Username, string Password)
         {
             string[] filelist = null;
             string workingdir = "";
@@ -297,9 +115,9 @@ namespace ftpclient
         }
         private void connectButton_Click(object sender, EventArgs e)
         {
-            LoginForm login = new LoginForm();
-            login.transferEvent += new transferInfo(login_transferEvent);
-            login.ShowDialog();
+            LoginForm loginForm = new LoginForm();
+            loginForm.loginEvent += new loginEventHandler(login);
+            loginForm.ShowDialog();
         }
         
         private void Exit_Click(object sender, EventArgs e)
@@ -331,17 +149,21 @@ namespace ftpclient
             logRichTextBox.SelectionStart = logRichTextBox.TextLength;
             logRichTextBox.ScrollToCaret();
         }
+        private void refreshList()
+        {
+            string[] filelist = null;
+            string workingdir = "";
+            if (!ftp.Refresh(ref filelist, ref workingdir))
+            {
+                MessageBox.Show("读取目录列表失败");
+            }
+            refreshListView(ref filelist, ref workingdir);
+        }
         private void refreshButton_Click(object sender, EventArgs e)
         {
             if (ftp.isConnected)
             {
-                string[] filelist = null;
-                string workingdir = "";
-                if(!ftp.Refresh(ref filelist, ref workingdir))
-                {
-                    MessageBox.Show("读取目录列表失败");
-                }
-                refreshListView(ref filelist, ref workingdir);
+                refreshList();
             }
             else
             {
@@ -390,20 +212,23 @@ namespace ftpclient
                 MessageBox.Show("请先连接到一个FTP服务器");
             }
         }
-        private void newFolder_tranferEvent(string foldername)
+        private void newFolder(string foldername)
         {
             string[] filelist = null;
             string workingdir = "";
-            ftp.NewFolder(ref filelist, ref workingdir, foldername);
+            if (!ftp.NewFolder(ref filelist, ref workingdir, foldername))
+            {
+                MessageBox.Show("新建文件夹失败");
+            }
             refreshListView(ref filelist, ref workingdir);
         }
         private void newFolderButton_Click(object sender, EventArgs e)
         {
             if (ftp.isConnected)
             {
-                NewFolderForm newFolder = new NewFolderForm();
-                newFolder.transferFolderNameEvent += new transferFolderName(newFolder_tranferEvent);
-                newFolder.ShowDialog();
+                NewFolderForm newFolderForm = new NewFolderForm();
+                newFolderForm.newFolderEvent += new newFolderEventHandler(newFolder);
+                newFolderForm.ShowDialog();
             }
             else
             {
@@ -440,7 +265,7 @@ namespace ftpclient
                 MessageBox.Show("请先连接到一个FTP服务器");
             }
         }
-        private void rename_tranferEvent(string newname)
+        private void rename(string newname)
         {
             string[] filelist = null;
             string workingdir = "";
@@ -491,7 +316,7 @@ namespace ftpclient
             if (ftp.isConnected)
             {
                 RenameForm renameForm = new RenameForm();
-                renameForm.transferNewFileNameEvent += new transferNewFileName(rename_tranferEvent);
+                renameForm.renameEvent += new renameEventHandler(rename);
                 renameForm.ShowDialog();
             }
             else
@@ -499,29 +324,72 @@ namespace ftpclient
                 MessageBox.Show("请先连接到一个FTP服务器");
             }
         }
+        private void updateProgressBar()
+        {
+            int m = completedRateProgressBar.Maximum;
+            int transferedDataSize = 0;
+            while (transferedDataSize < m)
+            {
+                Thread.Sleep(100);
+                try
+                {
+                    transferedDataSize = (int)(ftp.getTransferedDataSize / 1024);
+                    completedRateProgressBar.Value = transferedDataSize;
+                }
+                catch
+                {
+                    completedRateProgressBar.Value = 0;
+                    completedRateLabel.Text = "0%";
+                    if (updateProgressBar_thread != null && updateProgressBar_thread.ThreadState == ThreadState.Running)
+                    {
+                        updateProgressBar_thread.Abort();
+                    }
+                    return;
+                }
+                completedRateLabel.Text = ((float)transferedDataSize / m * 100).ToString("F1") + "%";
+            }
+            Thread.Sleep(100);
+            completedRateProgressBar.Value = 0;
+            completedRateLabel.Text = "0%";
+            if (updateProgressBar_thread != null && updateProgressBar_thread.ThreadState == ThreadState.Running)
+            {
+                updateProgressBar_thread.Abort();
+            }
+        }
         private void upload()
         {
             OpenFileDialog ofd = new OpenFileDialog();
+            
             ofd.DefaultExt = ".*";
             ofd.Filter = "file|*.*";
+            ofd.Multiselect = true;
             ofd.ShowDialog();
-            string filename = ofd.FileName;
-            if(filename != "")
+            
+            string[] fileNames = ofd.FileNames;
+            if (fileNames.Length > 0)
             {
                 try
                 {
-                    string[] filelist = null;
-                    string workingdir = "";
-                    if (ftp.Upload(ref filelist, ref workingdir, filename))
+                    foreach (string fileName in fileNames)
                     {
-                        serverStatusLabel.Text = "上传成功";
+                        FileInfo fileInfo = new FileInfo(fileName);
+                        long fileSize = fileInfo.Length;
+                        completedRateProgressBar.Minimum = 0;
+                        completedRateProgressBar.Maximum = (int)(fileSize / 1024);
+                        updateProgressBar_thread = new Thread(updateProgressBar);
+                        updateProgressBar_thread.Start();
+                        serverStatusLabel.Text += Path.GetFileName(fileName);
+                        if (ftp.Upload(fileName))
+                        {
+                            serverStatusLabel.Text = "上传成功";
+                        }
+                        else
+                        {
+                            MessageBox.Show("上传失败");
+                        }
+                        serverStatusLabel.Text = serverStatusLabel.Text.Substring(0, 4);
+                        logRichTextBox.Text = ftp.LogMessage;
                     }
-                    else
-                    {
-                        MessageBox.Show("上传失败");
-                    }
-                    refreshListView(ref filelist, ref workingdir);
-                    logRichTextBox.Text = ftp.LogMessage;
                 }
                 catch (Exception ex)
                 {
@@ -529,6 +397,7 @@ namespace ftpclient
                     //MessageBox.Show(ex.ToString());
                 }
             }
+            refreshList();
             enableOPS();
         }
         private void download()
@@ -536,49 +405,53 @@ namespace ftpclient
             listView1.Items[0].Selected = false;
             if (listView1.SelectedItems.Count > 0)
             {
-                bool checkAllItems = true;
-                foreach (ListViewItem item in listView1.SelectedItems)
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                fbd.Description = "请选择下载目录";
+                fbd.ShowDialog();
+                try
                 {
-                    if (!item.SubItems[2].Text.Equals("File"))
+                    foreach (ListViewItem item in listView1.SelectedItems)
                     {
-                        checkAllItems = false;
-                    }
-                }
-                if (checkAllItems == true)
-                {
-                    FolderBrowserDialog fbd = new FolderBrowserDialog();
-                    fbd.Description = "请选择下载目录";
-                    fbd.ShowDialog();
-                    try
-                    {
-                        foreach (ListViewItem item in listView1.SelectedItems)
+                        string remote_filename = item.Text;
+                        string local_filepath = fbd.SelectedPath;
+
+                        if (local_filepath != "")
                         {
-                            string remote_filename = item.Text;
-                            string local_filepath = fbd.SelectedPath;
-                            if(local_filepath != "")
+                            serverStatusLabel.Text += remote_filename;
+                            if (item.SubItems[2].Text.Equals("File"))
                             {
+                                long fileSize = long.Parse(item.SubItems[1].Text);
+                                completedRateProgressBar.Minimum = 0;
+                                completedRateProgressBar.Maximum = (int)(fileSize / 1024);
+                                updateProgressBar_thread = new Thread(updateProgressBar);
+                                updateProgressBar_thread.Start();
                                 if (!ftp.Download(remote_filename, local_filepath))
                                 {
                                     MessageBox.Show("文件 " + remote_filename + " 下载失败");
                                 }
+                                serverStatusLabel.Text = serverStatusLabel.Text.Substring(0, 4);
                             }
-                            else
+                            else if (item.SubItems[2].Text.Equals("Folder"))
                             {
-                                return;
+                                if (!ftp.DownloadFolder(currentPath, local_filepath, remote_filename))
+                                {
+                                    MessageBox.Show("文件夹 " + remote_filename + " 下载失败");
+                                }
                             }
                         }
-                        serverStatusLabel.Text = "下载完成";
-                        logRichTextBox.Text = ftp.LogMessage;
+                        else
+                        {
+                            enableOPS();
+                            return;
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("下载失败");
-                        //MessageBox.Show(ex.ToString());
-                    }
+                    serverStatusLabel.Text = "下载完成";
+                    logRichTextBox.Text = ftp.LogMessage;
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("不能选择文件夹");
+                    MessageBox.Show("下载失败");
+                    //MessageBox.Show(ex.ToString());
                 }
             }
             else
@@ -593,8 +466,6 @@ namespace ftpclient
             if (ftp.isConnected)
             {
                 serverStatusLabel.Text = "正在上传";
-                //upload();
-                
                 upload_thread = new Thread(upload);
                 upload_thread.TrySetApartmentState(ApartmentState.STA);
                 upload_thread.Start();
@@ -611,8 +482,6 @@ namespace ftpclient
             if (ftp.isConnected)
             {
                 serverStatusLabel.Text = "正在下载";
-                //download();
-                
                 download_thread = new Thread(download);
                 download_thread.TrySetApartmentState(ApartmentState.STA);
                 download_thread.Start();
@@ -628,20 +497,41 @@ namespace ftpclient
         {
             if (ftp.isConnected)
             {
-                if (upload_thread != null && upload_thread.ThreadState == ThreadState.Running)
+                if (upload_thread != null)
                 {
-                    ftp.Abort();
-                    upload_thread.Abort();
-                    serverStatusLabel.Text = "上传中止";
-                    logRichTextBox.Text = ftp.LogMessage;
+                    if(upload_thread.ThreadState == ThreadState.Suspended)
+                    {
+                        upload_thread.Resume();
+                    }
+                    if(upload_thread.ThreadState == ThreadState.Running)
+                    {
+                        ftp.Abort();
+                        upload_thread.Abort();
+                        serverStatusLabel.Text = "上传中止";
+                        logRichTextBox.Text = ftp.LogMessage;
+                        refreshList();  //自动执行一次刷新
+                    }
                 }
-                if (download_thread != null && download_thread.ThreadState == ThreadState.Running)
+                if (download_thread != null)
                 {
-                    ftp.Abort();
-                    download_thread.Abort();
-                    serverStatusLabel.Text = "下载中止";
-                    logRichTextBox.Text = ftp.LogMessage;
+                    if(download_thread.ThreadState == ThreadState.Suspended)
+                    {
+                        download_thread.Resume();
+                    }
+                    if (download_thread.ThreadState == ThreadState.Running)
+                    {
+                        ftp.Abort();
+                        download_thread.Abort();
+                        serverStatusLabel.Text = "下载中止";
+                        logRichTextBox.Text = ftp.LogMessage;
+                    }
                 }
+                if (updateProgressBar_thread != null && updateProgressBar_thread.ThreadState == ThreadState.Running)
+                {
+                    updateProgressBar_thread.Abort();
+                }
+                completedRateProgressBar.Value = 0;
+                completedRateLabel.Text = "0%";
                 enableOPS();
             }
             else
@@ -727,7 +617,8 @@ namespace ftpclient
             connectButton.Enabled = false;
             disconnectButton.Enabled = false;
             downloadButton.Enabled = false;
-            uploadButton.Enabled = false;
+            uploadFilesButton.Enabled = false;
+            uploadFoldersButton.Enabled = false;
             parentDirButton.Enabled = false;
             refreshButton.Enabled = false;
             changeDirButton.Enabled = false;
@@ -737,7 +628,7 @@ namespace ftpclient
             connectToolStripMenuItem.Enabled = false;
             disconnectToolStripMenuItem.Enabled = false;
             exitToolStripMenuItem.Enabled = false;
-            uploadToolStripMenuItem.Enabled = false;
+            uploadFilesToolStripMenuItem.Enabled = false;
             downloadToolStripMenuItem.Enabled = false;
             parentDirToolStripMenuItem.Enabled = false;
             refreshToolStripMenuItem.Enabled = false;
@@ -751,7 +642,8 @@ namespace ftpclient
             connectButton.Enabled = true;
             disconnectButton.Enabled = true;
             downloadButton.Enabled = true;
-            uploadButton.Enabled = true;
+            uploadFilesButton.Enabled = true;
+            uploadFoldersButton.Enabled = true;
             parentDirButton.Enabled = true;
             refreshButton.Enabled = true;
             changeDirButton.Enabled = true;
@@ -761,7 +653,7 @@ namespace ftpclient
             connectToolStripMenuItem.Enabled = true;
             disconnectToolStripMenuItem.Enabled = true;
             exitToolStripMenuItem.Enabled = true;
-            uploadToolStripMenuItem.Enabled = true;
+            uploadFilesToolStripMenuItem.Enabled = true;
             downloadToolStripMenuItem.Enabled = true;
             parentDirToolStripMenuItem.Enabled = true;
             refreshToolStripMenuItem.Enabled = true;
@@ -769,6 +661,103 @@ namespace ftpclient
             newFolderToolStripMenuItem.Enabled = true;
             deleteToolStripMenuItem.Enabled = true;
             renameToolStripMenuItem.Enabled = true;
+        }
+
+        private void pauseButton_Click(object sender, EventArgs e)
+        {
+            if (ftp.isConnected)
+            {
+                if (upload_thread != null && upload_thread.ThreadState == ThreadState.Running)
+                {
+                    upload_thread.Suspend();
+                    serverStatusLabel.Text = "上传暂停";
+                }
+                if (download_thread != null && download_thread.ThreadState == ThreadState.Running)
+                {
+                    download_thread.Suspend();
+                    serverStatusLabel.Text = "下载暂停";
+                }
+            }
+            else
+            {
+                MessageBox.Show("请先连接到一个FTP服务器");
+            }
+        }
+
+        private void resumeButton_Click(object sender, EventArgs e)
+        {
+            if (ftp.isConnected)
+            {
+                if (upload_thread != null && upload_thread.ThreadState == ThreadState.Suspended)
+                {
+                    upload_thread.Resume();
+                    serverStatusLabel.Text = "正在上传";
+                }
+                if (download_thread != null && download_thread.ThreadState == ThreadState.Suspended)
+                {
+                    download_thread.Resume();
+                    serverStatusLabel.Text = "正在下载";
+                }
+            }
+            else
+            {
+                MessageBox.Show("请先连接到一个FTP服务器");
+            }
+        }
+
+        private void uploadFolders()
+        {
+            if (ftp.isConnected)
+            {
+                CommonOpenFileDialog cofd = new CommonOpenFileDialog();
+                cofd.IsFolderPicker = true;
+                cofd.Multiselect = true;
+                cofd.ShowDialog();
+                try
+                {
+                    foreach (var folderPath in cofd.FileNames)
+                    {
+                        if (ftp.UploadFolder(folderPath, currentPath))
+                        {
+                            serverStatusLabel.Text = "上传成功";
+                        }
+                        else
+                        {
+                            MessageBox.Show("上传失败");
+                        }
+                    }
+                }
+                catch (System.InvalidOperationException)
+                {
+
+                }
+                catch
+                {
+                    MessageBox.Show("上传失败");
+                }
+                refreshList();
+                enableOPS();
+            }
+            else
+            {
+                MessageBox.Show("请先连接到一个FTP服务器");
+            }
+        }
+
+        private void uploadFoldersButton_Click(object sender, EventArgs e)
+        {
+            if (ftp.isConnected)
+            {
+                serverStatusLabel.Text = "正在上传";
+                upload_thread = new Thread(uploadFolders);
+                upload_thread.TrySetApartmentState(ApartmentState.STA);
+                upload_thread.Start();
+                disableOPS();
+            }
+            else
+            {
+                MessageBox.Show("请先连接到一个FTP服务器");
+            }
         }
     }
 }

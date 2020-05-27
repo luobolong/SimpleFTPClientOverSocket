@@ -20,13 +20,14 @@ namespace ftpclient
         private int timeout; // 响应时间
         private string logmessage; // 日志信息
         private bool connect_mode; // 连接方式 被动为true 主动为false
-        private const int BUFFER_SIZE = 8192;
+        private const int BUFFER_SIZE = 4096;
         private int Port_times = 1; // Port模式的连接次数
         private Socket mainsocket; // 主套接字
         private Socket datasocket; // 数据套接字
         private Socket listeningsocket; // 监听套接字(用于主动模式)
         private FileStream uploadFileStream; // 上传文件
         private FileStream downloadFileStream; // 下载文件
+        private long dataTransfered = 0; //已传输的数据字节数
 
         private static ftpservice service;
         #endregion
@@ -153,7 +154,7 @@ namespace ftpclient
                             break;
                         }
                     }
-                    continue;
+                    continue; //继续循环接收响应消息
                 }
                 if (rlen < bytes.Length)
                 {
@@ -205,17 +206,23 @@ namespace ftpclient
         #endregion
         #region 数据套接字
         /// <summary>
-        /// 使用被动模式打开数据嵌套字
+        /// 建立数据套接字
         /// </summary>
-        public void connectDataSocketForPassive()
+        /// <returns>是否成功</returns>
+        public bool connectDataSocket()
         {
-            if (connect_mode) //被动模式
+            if (isPassive) // 被动模式
             {
                 string[] pasv_info;
                 string dataip;
                 int dataport;
 
                 string response = Pasv();
+                int code = getResponseCode(response);
+                if (code != 227)
+                {
+                    return false;
+                }
 
                 // 提取PASV返回的字符串中的信息
                 int startindex = response.IndexOf('(') + 1;
@@ -231,20 +238,21 @@ namespace ftpclient
                 }
                 catch (Exception)
                 {
-                    return;
+                    return false;
                 }
             }
-        }
-        /// <summary>
-        /// 使用主动模式打开数据嵌套字，并关闭监听套接字
-        /// </summary>
-        public void connectDataSocketForActive()
-        {
-            if (!connect_mode)
+            else // 主动模式
             {
+                string response = Port();
+                int code = getResponseCode(response);
+                if (code != 200)
+                {
+                    return false;
+                }
                 datasocket = listeningsocket.Accept();
                 closeListeningSocket();
             }
+            return true;
         }
         /// <summary>
         /// 数据套接字接收列表数据
@@ -277,7 +285,6 @@ namespace ftpclient
             if (datasocket != null)
             {
                 datasocket.Dispose();
-                datasocket = null;
             }
         }
         /// <summary>
@@ -519,15 +526,15 @@ namespace ftpclient
         /// <summary>
         /// 上传单个文件
         /// </summary>
-        /// <param name="filename">完整的路径和文件名</param>
-        public bool Upload(string filename)
+        /// <param name="filepath">完整的路径和文件名</param>
+        public bool Upload(string filepath)
         {
             #region 设置传输方式
-            string getName = filename.Split('\\').Last<string>(); //提取路径中的文件名
+            string getName = Path.GetFileName(filepath); //提取路径中的文件名
             string extensionName = "";
             if (getName.Contains("."))
             {
-                int x = filename.LastIndexOf(".") + 1;
+                int x = filepath.LastIndexOf(".") + 1;
                 extensionName = getName.Substring(getName.LastIndexOf(".") + 1); //提取文件名中的扩展名
                 if (extensionName.Equals("txt") ||
                     extensionName.Equals("TXT") ||
@@ -548,47 +555,35 @@ namespace ftpclient
                 setType(true);
             }
             #endregion
-            if (isPassive)
+            dataTransfered = 0;
+            try
             {
-                connectDataSocketForPassive();
-                sendCommand("STOR " + getName);
-                string response1 = getResponseString();
-                int code1 = getResponseCode(response1);
-                if(code1 != 150 && code1 != 125)
+                if (!connectDataSocket())
                 {
                     return false;
                 }
-                uploadFileStream = new FileStream(filename, FileMode.Open);
-                int slen = 0;
-                Byte[] bytes = new byte[BUFFER_SIZE];
-                while ((slen = uploadFileStream.Read(bytes, 0, bytes.Length)) > 0)
-                {
-                    datasocket.Send(bytes, slen, 0);
-                }
-                uploadFileStream.Close();
-                uploadFileStream = null;
             }
-            else
+            catch
             {
-                Port();
-                sendCommand("STOR " + getName);
-                string response2 = getResponseString();
-                int code2 = getResponseCode(response2);
-                if (code2 != 150 && code2 != 125)
-                {
-                    return false;
-                }
-                connectDataSocketForActive();
-                uploadFileStream = new FileStream(filename, FileMode.Open);
-                int slen = 0;
-                Byte[] bytes = new byte[BUFFER_SIZE];
-                while ((slen = uploadFileStream.Read(bytes, 0, bytes.Length)) > 0)
-                {
-                    datasocket.Send(bytes, slen, 0);
-                }
-                uploadFileStream.Close();
-                uploadFileStream = null;
+                return false;
             }
+            sendCommand("STOR " + getName);
+            string response2 = getResponseString();
+            int code2 = getResponseCode(response2);
+            if (code2 != 150 && code2 != 125)
+            {
+                return false;
+            }
+            uploadFileStream = new FileStream(filepath, FileMode.Open);
+            int slen = 0;
+            Byte[] bytes = new byte[BUFFER_SIZE];
+            while ((slen = uploadFileStream.Read(bytes, 0, bytes.Length)) > 0)
+            {
+                datasocket.Send(bytes, slen, 0);
+                dataTransfered += slen;
+            }
+            uploadFileStream.Close();
+            uploadFileStream = null;
             closeDataSocket();
             string response3 = getResponseString();
             int code3 = getResponseCode(response3);
@@ -629,56 +624,43 @@ namespace ftpclient
                 setType(true);
             }
             #endregion
-
-            if (isPassive)
+            dataTransfered = 0;
+            try
             {
-                connectDataSocketForPassive();
-                sendCommand("RETR " + remote_filename);
-                string response1 = getResponseString();
-                int code1 = getResponseCode(response1);
-                if(code1 != 150 && code1 != 125)
+                if (!connectDataSocket())
                 {
                     return false;
                 }
-                downloadFileStream = new FileStream(local_filepath + "\\" + remote_filename, FileMode.OpenOrCreate);
-                for(; ; )
-                {
-                    Byte[] bytes = new byte[BUFFER_SIZE];
-                    int rlen = datasocket.Receive(bytes, bytes.Length, 0);
-                    downloadFileStream.Write(bytes, 0, rlen);
-                    if (rlen <= 0)
-                    {
-                        break;
-                    }
-                }
-                downloadFileStream.Close();
-                downloadFileStream = null;
             }
-            else
+            catch
             {
-                Port();
-                sendCommand("RETR " + remote_filename);
-                string response1 = getResponseString();
-                int code2 = getResponseCode(response1);
-                if (code2 != 150 && code2 != 125)
-                {
-                    return false;
-                }
-                connectDataSocketForActive();
-                downloadFileStream = new FileStream(local_filepath + "\\" + remote_filename, FileMode.OpenOrCreate);
-                for (; ; )
-                {
-                    Byte[] bytes = new byte[BUFFER_SIZE];
-                    int rlen = datasocket.Receive(bytes, bytes.Length, 0);
-                    downloadFileStream.Write(bytes, 0, rlen);
-                    if (rlen <= 0)
-                    {
-                        break;
-                    }
-                }
-                downloadFileStream.Close();
-                downloadFileStream = null;
+                return false;
             }
+            sendCommand("RETR " + remote_filename);
+            string response1 = getResponseString();
+            int code2 = getResponseCode(response1);
+            if (code2 != 150 && code2 != 125)
+            {
+                return false;
+            }
+            if (!Directory.Exists(local_filepath))
+            {
+                Directory.CreateDirectory(local_filepath);
+            }
+            downloadFileStream = new FileStream(local_filepath + "\\" + remote_filename, FileMode.OpenOrCreate);
+            for (; ; )
+            {
+                Byte[] bytes = new byte[BUFFER_SIZE];
+                int rlen = datasocket.Receive(bytes, bytes.Length, 0);
+                dataTransfered += rlen;
+                downloadFileStream.Write(bytes, 0, rlen);
+                if (rlen <= 0)
+                {
+                    break;
+                }
+            }
+            downloadFileStream.Close();
+            downloadFileStream = null;
             closeDataSocket();
             string response3 = getResponseString();
             int code3 = getResponseCode(response3);
@@ -750,6 +732,14 @@ namespace ftpclient
                     }
                 }
                 return false;
+            }
+        }
+
+        public long getTransferedDataSize
+        {
+            get
+            {
+                return dataTransfered;
             }
         }
         #endregion

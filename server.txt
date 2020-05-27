@@ -1,0 +1,4 @@
+192.168.38.129
+ftpuser
+145.24.145.107
+/pub/music/artists/abuze

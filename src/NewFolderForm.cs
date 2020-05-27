@@ -10,11 +10,11 @@ using System.Windows.Forms;
 
 namespace ftpclient
 {
-    public delegate void transferFolderName(string FolderName);
+    public delegate void newFolderEventHandler(string FolderName);
     public partial class NewFolderForm : Form
     {
         
-        public event transferFolderName transferFolderNameEvent;
+        public event newFolderEventHandler newFolderEvent;
         public NewFolderForm()
         {
             InitializeComponent();
@@ -26,11 +26,30 @@ namespace ftpclient
                 return textBox1.Text;
             }
         }
+        private void ok()
+        {
+            if (FolderName.Equals(string.Empty))
+            {
+                MessageBox.Show("文件夹名为空");
+            }
+            else
+            {
+                newFolderEvent?.Invoke(FolderName);
+                Close();
+            }
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            transferFolderNameEvent?.Invoke(FolderName);
-            Close();
+            ok();
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyValue == 13)
+            {
+                ok();
+            }
         }
     }
 }

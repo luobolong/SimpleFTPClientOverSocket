@@ -10,11 +10,11 @@ using System.Windows.Forms;
 
 namespace ftpclient
 {
-    public delegate void transferNewFileName(string NewFileName);
+    public delegate void renameEventHandler(string NewFileName);
     public partial class RenameForm : Form
     {
         
-        public event transferNewFileName transferNewFileNameEvent;
+        public event renameEventHandler renameEvent;
         public RenameForm()
         {
             InitializeComponent();
@@ -26,11 +26,30 @@ namespace ftpclient
                 return textBox1.Text;
             }
         }
+        private void ok()
+        {
+            if (NewFileName.Equals(string.Empty))
+            {
+                MessageBox.Show("名称为空");
+            }
+            else
+            {
+                renameEvent?.Invoke(NewFileName);
+                Close();
+            }
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            transferNewFileNameEvent?.Invoke(NewFileName);
-            Close();
+            ok();
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyValue == 13)
+            {
+                ok();
+            }
         }
     }
 }

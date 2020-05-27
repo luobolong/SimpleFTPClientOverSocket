@@ -37,8 +37,10 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.opToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.uploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uploadFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.downloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.abortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.parentDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,8 +55,11 @@
             this.connectButton = new System.Windows.Forms.ToolStripButton();
             this.disconnectButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.uploadButton = new System.Windows.Forms.ToolStripButton();
+            this.uploadFilesButton = new System.Windows.Forms.ToolStripButton();
+            this.uploadFoldersButton = new System.Windows.Forms.ToolStripButton();
             this.downloadButton = new System.Windows.Forms.ToolStripButton();
+            this.pauseButton = new System.Windows.Forms.ToolStripButton();
+            this.resumeButton = new System.Windows.Forms.ToolStripButton();
             this.abortButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.parentDirButton = new System.Windows.Forms.ToolStripButton();
@@ -78,6 +83,9 @@
             this.serverStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.clearLogButton = new System.Windows.Forms.Button();
             this.exportLogButton = new System.Windows.Forms.Button();
+            this.completedRateProgressBar = new System.Windows.Forms.ProgressBar();
+            this.completedRateLabel = new System.Windows.Forms.Label();
+            this.上传文件夹UToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -94,7 +102,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(588, 25);
+            this.menuStrip1.Size = new System.Drawing.Size(634, 25);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -138,8 +146,11 @@
             // opToolStripMenuItem
             // 
             this.opToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.uploadToolStripMenuItem,
+            this.uploadFilesToolStripMenuItem,
+            this.上传文件夹UToolStripMenuItem,
             this.downloadToolStripMenuItem,
+            this.pauseToolStripMenuItem,
+            this.resumeToolStripMenuItem,
             this.abortToolStripMenuItem,
             this.toolStripSeparator3,
             this.parentDirToolStripMenuItem,
@@ -152,71 +163,85 @@
             this.opToolStripMenuItem.Size = new System.Drawing.Size(62, 21);
             this.opToolStripMenuItem.Text = "操作(O)";
             // 
-            // uploadToolStripMenuItem
+            // uploadFilesToolStripMenuItem
             // 
-            this.uploadToolStripMenuItem.Name = "uploadToolStripMenuItem";
-            this.uploadToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.uploadToolStripMenuItem.Text = "上传文件(U)...";
-            this.uploadToolStripMenuItem.Click += new System.EventHandler(this.uploadButton_Click);
+            this.uploadFilesToolStripMenuItem.Name = "uploadFilesToolStripMenuItem";
+            this.uploadFilesToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.uploadFilesToolStripMenuItem.Text = "上传文件(U)...";
+            this.uploadFilesToolStripMenuItem.Click += new System.EventHandler(this.uploadButton_Click);
             // 
             // downloadToolStripMenuItem
             // 
             this.downloadToolStripMenuItem.Name = "downloadToolStripMenuItem";
-            this.downloadToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.downloadToolStripMenuItem.Text = "下载文件(D)...";
+            this.downloadToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.downloadToolStripMenuItem.Text = "下载文件或文件夹(D)...";
             this.downloadToolStripMenuItem.Click += new System.EventHandler(this.downloadButton_Click);
+            // 
+            // pauseToolStripMenuItem
+            // 
+            this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
+            this.pauseToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.pauseToolStripMenuItem.Text = "暂停传输(P)";
+            this.pauseToolStripMenuItem.Click += new System.EventHandler(this.pauseButton_Click);
+            // 
+            // resumeToolStripMenuItem
+            // 
+            this.resumeToolStripMenuItem.Name = "resumeToolStripMenuItem";
+            this.resumeToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.resumeToolStripMenuItem.Text = "恢复传输(R)";
+            this.resumeToolStripMenuItem.Click += new System.EventHandler(this.resumeButton_Click);
             // 
             // abortToolStripMenuItem
             // 
             this.abortToolStripMenuItem.Name = "abortToolStripMenuItem";
-            this.abortToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.abortToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.abortToolStripMenuItem.Text = "中止传输(S)";
             this.abortToolStripMenuItem.Click += new System.EventHandler(this.abortButton_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(172, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(195, 6);
             // 
             // parentDirToolStripMenuItem
             // 
             this.parentDirToolStripMenuItem.Name = "parentDirToolStripMenuItem";
-            this.parentDirToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.parentDirToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.parentDirToolStripMenuItem.Text = "返回上一层目录(P)";
             this.parentDirToolStripMenuItem.Click += new System.EventHandler(this.parentDirButton_Click);
             // 
             // refreshToolStripMenuItem
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.refreshToolStripMenuItem.Text = "刷新(F)";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshButton_Click);
             // 
             // changeDirToolStripMenuItem
             // 
             this.changeDirToolStripMenuItem.Name = "changeDirToolStripMenuItem";
-            this.changeDirToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.changeDirToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.changeDirToolStripMenuItem.Text = "打开路径(O)";
             this.changeDirToolStripMenuItem.Click += new System.EventHandler(this.changeDirButton_Click);
             // 
             // newFolderToolStripMenuItem
             // 
             this.newFolderToolStripMenuItem.Name = "newFolderToolStripMenuItem";
-            this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.newFolderToolStripMenuItem.Text = "新建文件夹(C)...";
             this.newFolderToolStripMenuItem.Click += new System.EventHandler(this.newFolderButton_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.deleteToolStripMenuItem.Text = "删除(D)";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteButton_Click);
             // 
             // renameToolStripMenuItem
             // 
             this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.renameToolStripMenuItem.Text = "重命名(R)...";
             this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameButton_Click);
             // 
@@ -242,8 +267,11 @@
             this.connectButton,
             this.disconnectButton,
             this.toolStripSeparator5,
-            this.uploadButton,
+            this.uploadFilesButton,
+            this.uploadFoldersButton,
             this.downloadButton,
+            this.pauseButton,
+            this.resumeButton,
             this.abortButton,
             this.toolStripSeparator2,
             this.parentDirButton,
@@ -254,7 +282,7 @@
             this.renameButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 25);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(588, 40);
+            this.toolStrip1.Size = new System.Drawing.Size(634, 40);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -287,17 +315,29 @@
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(6, 40);
             // 
-            // uploadButton
+            // uploadFilesButton
             // 
-            this.uploadButton.AutoSize = false;
-            this.uploadButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.uploadButton.Image = global::ftpclient.Properties.Resources.up32px;
-            this.uploadButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.uploadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.uploadButton.Name = "uploadButton";
-            this.uploadButton.Size = new System.Drawing.Size(40, 40);
-            this.uploadButton.Text = "上传文件";
-            this.uploadButton.Click += new System.EventHandler(this.uploadButton_Click);
+            this.uploadFilesButton.AutoSize = false;
+            this.uploadFilesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.uploadFilesButton.Image = global::ftpclient.Properties.Resources.up32px;
+            this.uploadFilesButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.uploadFilesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.uploadFilesButton.Name = "uploadFilesButton";
+            this.uploadFilesButton.Size = new System.Drawing.Size(40, 40);
+            this.uploadFilesButton.Text = "上传文件";
+            this.uploadFilesButton.Click += new System.EventHandler(this.uploadButton_Click);
+            // 
+            // uploadFoldersButton
+            // 
+            this.uploadFoldersButton.AutoSize = false;
+            this.uploadFoldersButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.uploadFoldersButton.Image = global::ftpclient.Properties.Resources.folder_upload32px;
+            this.uploadFoldersButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.uploadFoldersButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.uploadFoldersButton.Name = "uploadFoldersButton";
+            this.uploadFoldersButton.Size = new System.Drawing.Size(40, 40);
+            this.uploadFoldersButton.Text = "上传文件夹";
+            this.uploadFoldersButton.Click += new System.EventHandler(this.uploadFoldersButton_Click);
             // 
             // downloadButton
             // 
@@ -308,8 +348,32 @@
             this.downloadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.downloadButton.Name = "downloadButton";
             this.downloadButton.Size = new System.Drawing.Size(40, 40);
-            this.downloadButton.Text = "下载文件";
+            this.downloadButton.Text = "下载文件或文件夹";
             this.downloadButton.Click += new System.EventHandler(this.downloadButton_Click);
+            // 
+            // pauseButton
+            // 
+            this.pauseButton.AutoSize = false;
+            this.pauseButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.pauseButton.Image = ((System.Drawing.Image)(resources.GetObject("pauseButton.Image")));
+            this.pauseButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.pauseButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.pauseButton.Name = "pauseButton";
+            this.pauseButton.Size = new System.Drawing.Size(40, 40);
+            this.pauseButton.Text = "暂停传输";
+            this.pauseButton.Click += new System.EventHandler(this.pauseButton_Click);
+            // 
+            // resumeButton
+            // 
+            this.resumeButton.AutoSize = false;
+            this.resumeButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.resumeButton.Image = global::ftpclient.Properties.Resources.play32px;
+            this.resumeButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.resumeButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.resumeButton.Name = "resumeButton";
+            this.resumeButton.Size = new System.Drawing.Size(40, 40);
+            this.resumeButton.Text = "恢复传输";
+            this.resumeButton.Click += new System.EventHandler(this.resumeButton_Click);
             // 
             // abortButton
             // 
@@ -407,7 +471,7 @@
             this.logRichTextBox.Location = new System.Drawing.Point(6, 20);
             this.logRichTextBox.Name = "logRichTextBox";
             this.logRichTextBox.ReadOnly = true;
-            this.logRichTextBox.Size = new System.Drawing.Size(552, 178);
+            this.logRichTextBox.Size = new System.Drawing.Size(598, 178);
             this.logRichTextBox.TabIndex = 3;
             this.logRichTextBox.Text = "";
             this.logRichTextBox.TextChanged += new System.EventHandler(this.logRichTextBox_TextChanged);
@@ -419,7 +483,7 @@
             this.groupBox1.Controls.Add(this.logRichTextBox);
             this.groupBox1.Location = new System.Drawing.Point(12, 68);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(564, 204);
+            this.groupBox1.Size = new System.Drawing.Size(610, 204);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "消息日志";
@@ -434,7 +498,7 @@
             this.groupBox2.Controls.Add(this.pathLabel);
             this.groupBox2.Location = new System.Drawing.Point(12, 289);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(564, 447);
+            this.groupBox2.Size = new System.Drawing.Size(610, 547);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "远程站点";
@@ -453,7 +517,7 @@
             this.listView1.LargeImageList = this.imageList1;
             this.listView1.Location = new System.Drawing.Point(6, 48);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(552, 393);
+            this.listView1.Size = new System.Drawing.Size(598, 493);
             this.listView1.SmallImageList = this.imageList1;
             this.listView1.TabIndex = 3;
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -463,22 +527,22 @@
             // columnHeader1
             // 
             this.columnHeader1.Text = "Name";
-            this.columnHeader1.Width = 180;
+            this.columnHeader1.Width = 220;
             // 
             // columnHeader2
             // 
             this.columnHeader2.Text = "Size";
-            this.columnHeader2.Width = 120;
+            this.columnHeader2.Width = 135;
             // 
             // columnHeader3
             // 
             this.columnHeader3.Text = "Type";
-            this.columnHeader3.Width = 80;
+            this.columnHeader3.Width = 75;
             // 
             // columnHeader4
             // 
             this.columnHeader4.Text = "Last modified";
-            this.columnHeader4.Width = 120;
+            this.columnHeader4.Width = 150;
             // 
             // imageList1
             // 
@@ -493,7 +557,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pathTextBox.Location = new System.Drawing.Point(66, 21);
             this.pathTextBox.Name = "pathTextBox";
-            this.pathTextBox.Size = new System.Drawing.Size(492, 21);
+            this.pathTextBox.Size = new System.Drawing.Size(538, 21);
             this.pathTextBox.TabIndex = 1;
             // 
             // pathLabel
@@ -509,9 +573,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.serverStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 739);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 839);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(588, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(634, 22);
             this.statusStrip1.TabIndex = 7;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -525,7 +589,7 @@
             // 
             this.clearLogButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.clearLogButton.Font = new System.Drawing.Font("宋体", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.clearLogButton.Location = new System.Drawing.Point(518, 271);
+            this.clearLogButton.Location = new System.Drawing.Point(564, 271);
             this.clearLogButton.Margin = new System.Windows.Forms.Padding(2);
             this.clearLogButton.Name = "clearLogButton";
             this.clearLogButton.Size = new System.Drawing.Size(51, 20);
@@ -538,7 +602,7 @@
             // 
             this.exportLogButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.exportLogButton.Font = new System.Drawing.Font("宋体", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.exportLogButton.Location = new System.Drawing.Point(463, 271);
+            this.exportLogButton.Location = new System.Drawing.Point(509, 271);
             this.exportLogButton.Margin = new System.Windows.Forms.Padding(2);
             this.exportLogButton.Name = "exportLogButton";
             this.exportLogButton.Size = new System.Drawing.Size(51, 20);
@@ -547,12 +611,42 @@
             this.exportLogButton.UseVisualStyleBackColor = true;
             this.exportLogButton.Click += new System.EventHandler(this.exportLogButton_Click);
             // 
+            // completedRateProgressBar
+            // 
+            this.completedRateProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.completedRateProgressBar.Location = new System.Drawing.Point(363, 842);
+            this.completedRateProgressBar.Name = "completedRateProgressBar";
+            this.completedRateProgressBar.Size = new System.Drawing.Size(209, 16);
+            this.completedRateProgressBar.TabIndex = 9;
+            // 
+            // completedRateLabel
+            // 
+            this.completedRateLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.completedRateLabel.BackColor = System.Drawing.Color.Transparent;
+            this.completedRateLabel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.completedRateLabel.ForeColor = System.Drawing.Color.Black;
+            this.completedRateLabel.Location = new System.Drawing.Point(572, 842);
+            this.completedRateLabel.Name = "completedRateLabel";
+            this.completedRateLabel.Size = new System.Drawing.Size(44, 19);
+            this.completedRateLabel.TabIndex = 10;
+            this.completedRateLabel.Text = "0%";
+            this.completedRateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // 上传文件夹UToolStripMenuItem
+            // 
+            this.上传文件夹UToolStripMenuItem.Name = "上传文件夹UToolStripMenuItem";
+            this.上传文件夹UToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.上传文件夹UToolStripMenuItem.Text = "上传文件夹(U)...";
+            this.上传文件夹UToolStripMenuItem.Click += new System.EventHandler(this.uploadFoldersButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.ClientSize = new System.Drawing.Size(588, 761);
+            this.ClientSize = new System.Drawing.Size(634, 861);
+            this.Controls.Add(this.completedRateLabel);
+            this.Controls.Add(this.completedRateProgressBar);
             this.Controls.Add(this.exportLogButton);
             this.Controls.Add(this.clearLogButton);
             this.Controls.Add(this.statusStrip1);
@@ -562,9 +656,9 @@
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.MinimumSize = new System.Drawing.Size(604, 800);
+            this.MinimumSize = new System.Drawing.Size(650, 900);
             this.Name = "MainForm";
-            this.Text = "FTP客户端(Socket) V1.1";
+            this.Text = "FTP客户端(Socket) V1.2";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -591,12 +685,12 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton refreshButton;
-        private System.Windows.Forms.ToolStripButton uploadButton;
+        private System.Windows.Forms.ToolStripButton uploadFilesButton;
         private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem opToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton deleteButton;
         private System.Windows.Forms.ToolStripButton renameButton;
-        private System.Windows.Forms.ToolStripMenuItem uploadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem uploadFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem downloadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
@@ -630,6 +724,14 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.Button clearLogButton;
         private System.Windows.Forms.Button exportLogButton;
+        private System.Windows.Forms.ProgressBar completedRateProgressBar;
+        private System.Windows.Forms.Label completedRateLabel;
+        private System.Windows.Forms.ToolStripButton pauseButton;
+        private System.Windows.Forms.ToolStripButton resumeButton;
+        private System.Windows.Forms.ToolStripMenuItem pauseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resumeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton uploadFoldersButton;
+        private System.Windows.Forms.ToolStripMenuItem 上传文件夹UToolStripMenuItem;
     }
 }
 
